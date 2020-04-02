@@ -1,0 +1,101 @@
+---
+title: "COVID-19 testing in Monterey County"
+output:
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(plotly)
+library(reshape2)
+
+# read in COVID-19 data for Monterey
+mry <- read_csv("covid19_mry.csv")
+mry$date <- as.Date(mry$date, format = "%Y-%m-%d")
+```
+
+Data provided by the [County of Monterey Health Department](https://www.co.monterey.ca.us/government/departments-a-h/health/diseases/2019-novel-coronavirus-2019-ncov)
+
+### COVID-19 Cases (cumulative)
+
+```{r}
+# Plot line chart showing the number of COVID-19 cases over time
+mry_tot <- ggplot(mry, aes(x = date,
+                           y = infected_total,
+                           text = paste0("<b>Date: </b>", format(date, format = "%b %d"), "<br>",
+                                         "<b>Total Cases: </b>", infected_total, "<br>",
+                                         "<b>Additional Cases Today: </b>", infected_diff),
+                           group = 1)) +
+  xlab("") +
+  ylab("Confirmed Cases") +
+  expand_limits(y = 0) +
+  theme_minimal(base_size = 14) +
+  geom_line(color = "#fc8d62") +
+  geom_point(color = "#fc8d62")
+
+ggplotly(mry_tot, tooltip = "text") %>%
+  config(displayModeBar = FALSE)  %>%
+  layout(hoverlabel = list(align = "left"))
+```
+
+### COVID-19 Testing (cumulative)
+
+```{r}
+# Reshape data to plot the num of tests and the num of positive cases each day
+mry_testing <- select(mry, date, tests, infected_total) %>%
+  melt(id.vars = "date") %>%
+  mutate(variable = recode(variable,
+                           "tests" = "Tests", 
+                           "infected_total" = "Positive Cases"))
+
+# Use a factor to fix the order of tests and positive cases
+mry_testing$variable <- factor(mry_testing$variable, levels = c("Tests","Positive Cases"))
+
+# Plot ribbon chart to show testing and positive cases over time
+testing_plot <- ggplot(mry_testing, aes(x = date,
+                                        y = value,
+                                        fill = variable,
+                                        text = paste0("<b>Date: </b>", format(date, format = "%b %d"), "<br>",
+                                         "<b> Total ",variable,": </b>",value),
+                                        group = 1)) +
+  xlab("") +
+  ylab("Number of Tests") +
+  expand_limits(y = 0) +
+  theme_minimal(base_size = 14) +
+  geom_ribbon(aes(ymin = 0, ymax = value)) +
+  scale_fill_brewer(palette = "Set2",
+                    name = "")
+
+ggplotly(testing_plot, tooltip = "text") %>%
+  config(displayModeBar = FALSE)  %>%
+  layout(hoverlabel = list(align = "left"),
+         legend = list(orientation = "v",
+                   y = 1, x = 0.02))
+```
+
+### Percent of Positive Tests (cumulative)
+
+```{r}
+# Add a column calculating the % of positive tests
+mry <- mutate(mry,
+              pct_pos  = infected_total/tests*100)
+
+# Plot column chart to show % of positive tests over time
+mry_pct_pos <- ggplot(mry, aes(x = date,
+                           y = pct_pos,
+                           text = paste0("<b>Date: </b>", format(date, format = "%b %d"), "<br>",
+                                         "<b>Percent Positive Tests: </b>",
+                                         format(round(pct_pos, 2), nsmall = 2),"%"),
+                           group = 1)) +
+  xlab("") +
+  ylab("% Positive") +
+  theme_minimal(base_size = 14) +
+  geom_col(fill = "#8da0cb")
+
+ggplotly(mry_pct_pos, tooltip = "text") %>%
+  config(displayModeBar = FALSE)  %>%
+  layout(hoverlabel = list(align = "left"))
+```
