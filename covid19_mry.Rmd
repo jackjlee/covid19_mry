@@ -17,7 +17,8 @@ mry <- read_csv("covid19_mry.csv")
 mry$date <- as.Date(mry$date, format = "%Y-%m-%d")
 ```
 
-Data provided by the [County of Monterey Health Department](https://www.co.monterey.ca.us/government/departments-a-h/health/diseases/2019-novel-coronavirus-2019-ncov)
+Data provided by the [County of Monterey Health Department](https://www.co.monterey.ca.us/government/departments-a-h/health/diseases/2019-novel-coronavirus-2019-ncov)  
+Updated using data provided on April 2, 2020
 
 ### COVID-19 Cases (cumulative)
 
