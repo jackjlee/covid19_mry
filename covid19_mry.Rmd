@@ -18,7 +18,7 @@ mry$date <- as.Date(mry$date, format = "%Y-%m-%d")
 ```
 
 Data provided by the [County of Monterey Health Department](https://www.co.monterey.ca.us/government/departments-a-h/health/diseases/2019-novel-coronavirus-2019-ncov)  
-Updated using data provided on April 6, 2020 (latest testing numbers are for April 3)
+Updated using data provided on April 7, 2020 (latest testing numbers are for April 5)
 
 ### COVID-19 Cases (cumulative)
 
@@ -49,7 +49,7 @@ ggplotly(mry_tot, tooltip = "text") %>%
 mry_testing <- select(mry, date, tests, infected_total) %>%
   melt(id.vars = "date") %>%
   mutate(variable = recode(variable,
-                           "tests" = "Tests", 
+                           "tests" = "Tests",
                            "infected_total" = "Positive Cases"))
 
 # Use a factor to fix the order of tests and positive cases
