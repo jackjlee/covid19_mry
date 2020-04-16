@@ -4,4 +4,4 @@
 
 * CSV file contains daily information about COVID-19 testing and positive cases
 
-* Last updated on April 14, 2020 (latest testing numbers are for April 12)
+* Last updated on April 15, 2020 (latest testing numbers are for April 13)
