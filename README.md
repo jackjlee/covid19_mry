@@ -4,4 +4,4 @@
 
 * CSV file contains daily information about COVID-19 testing and positive cases
 
-* Last updated on May 5, 2020 (latest numbers are for May 3)
+* Last updated on May 6, 2020 (latest numbers are for May 4)
